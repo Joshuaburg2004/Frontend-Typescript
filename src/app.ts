@@ -106,3 +106,16 @@ console.log(allEvenRange(25)(5))
 console.log(allEvenRange(-5)(-25))
 console.log(allEvenRange(-25)(-25))
 console.log(allEvenRange(-26)(-26))
+
+
+const drawLine = (length: number) : string => {
+    const teller = (i: number) : string => {
+        if(i < length){
+            return `*${teller(i + 1)}`
+        }
+        return ""
+    }
+    return teller(0)
+}
+
+console.log(drawLine(13))

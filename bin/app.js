@@ -97,3 +97,13 @@ console.log(allEvenRange(25)(5));
 console.log(allEvenRange(-5)(-25));
 console.log(allEvenRange(-25)(-25));
 console.log(allEvenRange(-26)(-26));
+const drawLine = (length) => {
+    const teller = (i) => {
+        if (i < length) {
+            return `*${teller(i + 1)}`;
+        }
+        return "";
+    };
+    return teller(0);
+};
+console.log(drawLine(13));
