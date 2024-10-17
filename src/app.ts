@@ -132,3 +132,28 @@ const drawSymbols = (symbol: string) => (length: number) : string => {
 }
 
 console.log(drawSymbols("%")(15))
+
+const toBinary = (n: number) : string => {
+    const internal = (i: number) : string => {
+        if(i > 1)
+            return `${internal(Math.trunc(i / 2))}${i % 2}`
+        return `${i % 2}`
+    }
+    return internal(n).replace(/^0+/, "")
+}
+
+console.log(toBinary(5))
+console.log(toBinary(17))
+
+
+const toBase = (n: number) => (base: number) : string => {
+    const internal = (i: number) : string => {
+        if(i > 1)
+            return `${internal(Math.trunc(i / base))}${i % base}`
+        return `${i % base}`
+    }
+    return internal(n).replace(/^0+/, "")
+}
+
+console.log(toBase(5)(3))
+console.log(toBase(17)(6))

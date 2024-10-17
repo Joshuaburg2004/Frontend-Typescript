@@ -117,3 +117,23 @@ const drawSymbols = (symbol) => (length) => {
     return teller(0);
 };
 console.log(drawSymbols("%")(15));
+const toBinary = (n) => {
+    const internal = (i) => {
+        if (i > 1)
+            return `${internal(Math.trunc(i / 2))}${i % 2}`;
+        return `${i % 2}`;
+    };
+    return internal(n).replace(/^0+/, "");
+};
+console.log(toBinary(5));
+console.log(toBinary(17));
+const toBase = (n) => (base) => {
+    const internal = (i) => {
+        if (i > 1)
+            return `${internal(Math.trunc(i / base))}${i % base}`;
+        return `${i % base}`;
+    };
+    return internal(n).replace(/^0+/, "");
+};
+console.log(toBase(5)(3));
+console.log(toBase(17)(6));
