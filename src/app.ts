@@ -119,3 +119,16 @@ const drawLine = (length: number) : string => {
 }
 
 console.log(drawLine(13))
+
+
+const drawSymbols = (symbol: string) => (length: number) : string => {
+    const teller = (i: number) : string => {
+        if(i < length){
+            return `${symbol}${teller(i + 1)}`
+        }
+        return ""
+    }
+    return teller(0)
+}
+
+console.log(drawSymbols("%")(15))

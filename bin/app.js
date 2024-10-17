@@ -107,3 +107,13 @@ const drawLine = (length) => {
     return teller(0);
 };
 console.log(drawLine(13));
+const drawSymbols = (symbol) => (length) => {
+    const teller = (i) => {
+        if (i < length) {
+            return `${symbol}${teller(i + 1)}`;
+        }
+        return "";
+    };
+    return teller(0);
+};
+console.log(drawSymbols("%")(15));
