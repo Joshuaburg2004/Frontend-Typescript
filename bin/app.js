@@ -7,6 +7,9 @@ const CreateRandomPoint = (min) => (max) => ({
     },
     GetY: function () {
         return this.Position[1];
+    },
+    Distance: function (that) {
+        return Math.sqrt(Math.floor(Math.pow(this.GetX() - that.GetX(), 2) + Math.pow(this.GetY() - that.GetY(), 2)));
     }
 });
 const CreateFixedPoint = (x) => (y) => ({
@@ -16,7 +19,10 @@ const CreateFixedPoint = (x) => (y) => ({
     },
     GetY: function () {
         return this.Position[1];
+    },
+    Distance: function (that) {
+        return Math.sqrt(Math.floor(Math.pow(this.GetX() - that.GetX(), 2) + Math.pow(this.GetY() - that.GetY(), 2)));
     }
 });
-let point = CreateFixedPoint(4)(5);
-console.log(point.GetX());
+console.log(CreateFixedPoint(4)(5).GetX());
+console.log(CreateFixedPoint(4)(5).Distance(CreateFixedPoint(5)(4)));
