@@ -36,3 +36,34 @@ const CreateFixedPoint = (x: number) => (y: number): Point2D => ({
 console.log(CreateFixedPoint(4)(5).GetX())
 console.log(CreateFixedPoint(4)(5).Distance(CreateFixedPoint(5)(4)))
 
+interface Blobber {
+    Position: Point2D
+    Speed: number
+    Move: (this: Blobber) => void
+}
+
+const CreateBlob = () : Blobber => ({
+    Position: CreateRandomPoint(-50)(50),
+    Speed: Random(0)(5),
+    Move: function (this: Blobber) : void{
+        switch(Random(0)(3)){
+            case 0:
+                console.log("up")
+                this.Position.Position[1] += this.Speed
+                break
+            case 1:
+                console.log("right")
+                this.Position.Position[0] += this.Speed
+                break
+            case 2:
+                console.log("down")
+                this.Position.Position[1] -= this.Speed
+                break
+            case 3:
+                console.log("left")
+                this.Position.Position[0] -= this.Speed
+                break
+        }
+    }
+})
+
