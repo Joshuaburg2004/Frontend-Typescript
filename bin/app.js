@@ -23,3 +23,13 @@ const last = (l) => {
 };
 console.log(last((0, exports.List)([5, 4, 3, 2, 1])));
 console.log(last((0, exports.List)([1, 2, 3, 4, 5])));
+const rev = (l) => {
+    if (l.kind == "empty" || l.tail.kind == "empty") {
+        return l;
+    }
+    const revHead = rev(l.tail);
+    l.tail.tail = l;
+    l.tail = { kind: "empty" };
+    return revHead;
+};
+console.log(rev((0, exports.List)([5, 4, 3, 2, 1])));

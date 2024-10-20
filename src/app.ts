@@ -34,3 +34,15 @@ const last = <T>(l: List<T>) : Option<T> => {
 
 console.log(last(List([5, 4, 3, 2, 1])))
 console.log(last(List([1, 2, 3, 4, 5])))
+
+const rev = <T>(l: List<T>) : List<T> => {
+  if (l.kind == "empty" || l.tail.kind == "empty"){
+    return l
+  }
+  const revHead = rev(l.tail)
+  l.tail.tail = l
+  l.tail = {kind: "empty"}
+  return revHead
+}
+
+console.log(rev(List([5, 4, 3, 2, 1])))
