@@ -32,21 +32,49 @@ const CreateBlob = () => ({
     Move: function () {
         switch (Random(0)(3)) {
             case 0:
-                console.log("up");
                 this.Position.Position[1] += this.Speed;
+                if (this.Position.Position[1] > 50)
+                    this.Position.Position[1] = 50;
                 break;
             case 1:
-                console.log("right");
                 this.Position.Position[0] += this.Speed;
+                if (this.Position.Position[0] > 50)
+                    this.Position.Position[0] = 50;
                 break;
             case 2:
-                console.log("down");
                 this.Position.Position[1] -= this.Speed;
+                if (this.Position.Position[1] < -50)
+                    this.Position.Position[1] = -50;
                 break;
             case 3:
-                console.log("left");
                 this.Position.Position[0] -= this.Speed;
+                if (this.Position.Position[0] < -50)
+                    this.Position.Position[0] = -50;
                 break;
         }
     }
 });
+const CreateWorld = (ticks) => ({
+    Blob1: CreateBlob(),
+    Blob2: CreateBlob(),
+    Ticks: ticks,
+    Run: function () {
+        console.log(`Blob 1 is in position ${this.Blob1.Position.GetX()}, ${this.Blob1.Position.GetY()}`);
+        console.log(`Blob 2 is in position ${this.Blob2.Position.GetX()}, ${this.Blob2.Position.GetY()}`);
+        const runner = (tick) => {
+            if (tick < this.Ticks) {
+                this.Blob1.Move();
+                this.Blob2.Move();
+                console.log(`Blob 1 is now in position ${this.Blob1.Position.GetX()}, ${this.Blob1.Position.GetY()}`);
+                console.log(`Blob 2 is now in position ${this.Blob2.Position.GetX()}, ${this.Blob2.Position.GetY()}`);
+                runner(tick + 1);
+            }
+            else {
+                console.log(`Blob 1 finished in position ${this.Blob1.Position.GetX()}, ${this.Blob1.Position.GetY()}`);
+                console.log(`Blob 2 finished in position ${this.Blob2.Position.GetX()}, ${this.Blob2.Position.GetY()}`);
+            }
+        };
+        runner(0);
+    }
+});
+CreateWorld(5).Run();
