@@ -55,14 +55,19 @@ const last = <T>(l: List<T>) : Option<T> => {
 console.log(last(List([5, 4, 3, 2, 1])))
 console.log(last(List([1, 2, 3, 4, 5])))
 
-const rev = <T>(l: List<T>) : List<T> => {
-  if (l.kind == "empty" || l.tail.kind == "empty"){
-    return l
+const rev = <T>(l: List<T>): List<T> => {
+  const inner = (liner: List<T>) => (emptyL: List<T>): List<T> => {
+    if(liner.kind == "empty"){
+        return emptyL
+    }
+    emptyL = {
+      kind: "list",
+      head: liner.head,
+      tail: emptyL
+    }
+    return inner(liner.tail)(emptyL)
   }
-  const revHead = rev(l.tail)
-  l.tail.tail = l
-  l.tail = {kind: "empty"}
-  return revHead
+  return inner(l)({kind: "empty"})
 }
 
 console.log(printList(rev(List([5, 4, 3, 2, 1]))))
@@ -91,3 +96,25 @@ const nth = <T>(n: bigint) => (l: List<T>): Option<T> => {
 
 console.log(nth(5n)(List([5, 4, 3, 2, 1, 2])))
 console.log(nth(7n)(List([5, 4, 3, 2, 1, 2])))
+
+const palindrome = <T>(l: List<T>) : boolean => {
+  const checker = (curr: List<T>) => (reved: List<T>) : boolean => {
+    if(curr.kind == "empty" && reved.kind == "empty"){
+      return true
+    }
+    if(curr.kind == "empty"){
+      return false
+    }
+    if(reved.kind == "empty"){
+      return false
+    }
+    if(curr.head == reved.head){
+      return checker(curr.tail)(reved.tail)
+    }
+    return false
+  }
+  return checker(l)(rev(l))
+}
+
+console.log(palindrome(List([5, 4, 5])))
+console.log(palindrome(List([6, 5, 3])))
