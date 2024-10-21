@@ -7,6 +7,26 @@ head: T,
 tail: List<T>
 }
 
+export type ListElement<T> = {
+  kind: "element",
+  value: T
+} | {
+  kind: "nested list",
+  nestedList: List<ListElement<T>>
+}
+
+const printList = <T>(list: List<T>): string => {
+  if(list.kind == "empty"){
+    return ""
+  }
+  if(list.tail.kind == "empty"){
+    return `${list.head}`
+  }
+
+  return `${list.head} ${printList(list.tail)}`
+  
+};
+
 type Option<T> = {
     kind : "none"
   } | {
@@ -45,4 +65,29 @@ const rev = <T>(l: List<T>) : List<T> => {
   return revHead
 }
 
-console.log(rev(List([5, 4, 3, 2, 1])))
+console.log(printList(rev(List([5, 4, 3, 2, 1]))))
+
+const append = <T>(l1: List<T>) => (l2: List<T>) : List<T> => {
+  const appender = (list: List<T>) : List<T> => {
+    if(list.kind == "empty")
+      return l2
+    if(list.tail.kind == "empty")
+      return {...list, tail: l2}
+    return {...list, tail: appender(list.tail)}
+  }
+  return appender(l1)
+}
+
+console.log(printList(append(List([1, 2, 3, 4, 5]))(List([6, 7, 8, 9, 0]))))
+
+const nth = <T>(n: bigint) => (l: List<T>): Option<T> => {
+  const getter = (i: bigint) => (list: List<T>) : Option<T> => {
+    if(list.kind == "empty") return {kind: "none"}
+    if(i == n) return {kind: "some", value: list.head}
+    return getter(i + 1n)(list.tail)
+  }
+  return getter(0n)(l)
+} 
+
+console.log(nth(5n)(List([5, 4, 3, 2, 1, 2])))
+console.log(nth(7n)(List([5, 4, 3, 2, 1, 2])))
