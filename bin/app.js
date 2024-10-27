@@ -152,4 +152,4 @@ const caesarCypherWithUpper = (l) => (shift) => {
     };
     return caesar(l);
 };
-console.log();
+prettyprintList(caesarCypher((0, exports.List)(["h", "l", "y"]))(1n), console.log);

@@ -186,4 +186,4 @@ const caesarCypherWithUpper = (l: List<string>) => (shift: bigint) : List<string
     return caesar(l)
 }
 
-console.log()
+prettyprintList(caesarCypher(List(["h", "l", "y"]))(1n), console.log)
