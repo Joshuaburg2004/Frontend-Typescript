@@ -7,32 +7,37 @@ head: T,
 tail: List<T>
 }
 
-export type ListElement<T> = {
-  kind: "element",
-  value: T
-} | {
-  kind: "nested list",
-  nestedList: List<ListElement<T>>
-}
-
-const printList = <T>(list: List<T>): string => {
-  if(list.kind == "empty"){
-    return ""
-  }
-  if(list.tail.kind == "empty"){
-    return `${list.head}`
-  }
-
-  return `${list.head} ${printList(list.tail)}`
-  
-};
 
 type Option<T> = {
-    kind : "none"
-  } | {
-    kind: "some"
-    value: T
+  kind : "none"
+} | {
+  kind: "some"
+  value: T
+}
+
+type BasicFun<a, b> = (_:a) => b
+type Fun<a, b> = BasicFun<a,b> & {
+    then: <c>(g:BasicFun<b, c>) => Fun<a, c>
+}
+const Fun = <a, b>(f:BasicFun<a,b>) : Fun<a, b> => 
+  Object.assign(
+      f, 
+      {
+          then:function<c>(this:Fun<a,b>, g:BasicFun<b,c>): Fun<a,c> {
+              return Fun(a => g(this(a)))
+          }
+      }
+  )
+
+
+
+const prettyprintList = <T>(l: List<T>, cont:BasicFun<T, void>) =>{
+  if(l.kind == "empty"){return}
+  else{
+    cont(l.head)
+    prettyprintList(l.tail, cont)
   }
+}
 
 export const List = <T>(array : T[]) : List<T> => {
 let x : List<T> = { kind : "empty" }
@@ -70,7 +75,7 @@ const rev = <T>(l: List<T>): List<T> => {
   return inner(l)({kind: "empty"})
 }
 
-console.log(printList(rev(List([5, 4, 3, 2, 1]))))
+prettyprintList(rev(List([5, 4, 3, 2, 1])), console.log)
 
 const append = <T>(l1: List<T>) => (l2: List<T>) : List<T> => {
   const appender = (list: List<T>) : List<T> => {
@@ -83,7 +88,7 @@ const append = <T>(l1: List<T>) => (l2: List<T>) : List<T> => {
   return appender(l1)
 }
 
-console.log(printList(append(List([1, 2, 3, 4, 5]))(List([6, 7, 8, 9, 0]))))
+prettyprintList(append(List([1, 2, 3, 4, 5]))(List([6, 7, 8, 9, 0])), console.log)
 
 const nth = <T>(n: bigint) => (l: List<T>): Option<T> => {
   const getter = (i: bigint) => (list: List<T>) : Option<T> => {
@@ -119,7 +124,7 @@ const palindrome = <T>(l: List<T>) : boolean => {
 console.log(palindrome(List([5, 4, 5])))
 console.log(palindrome(List([6, 5, 3])))
 
-const Compress = <T> (l: List<T>): List<T> => {
+const compress = <T> (l: List<T>): List<T> => {
   const inner = <T> (ler: List<T>) => (last: T | undefined): List<T> => {
     if(ler.kind == "empty"){ return ler; }
     if(ler.head == last){ return inner(ler.tail)(last)}
@@ -132,4 +137,53 @@ const Compress = <T> (l: List<T>): List<T> => {
   return inner(l)(undefined)
 }
 
-console.log(printList(Compress(List([5, 5, 4, 4, 3, 3, 2, 2, 2, 1]))))
+prettyprintList(compress(List([5, 5, 4, 4, 3, 3, 2, 2, 2, 1])), console.log)
+
+
+const caesarCypher = (l: List<string>) => (shift: bigint) : List<string> =>
+  {
+    const caesar = (list: List<string>) : List<string> => {
+      if(list.kind == "list" && list.head.charCodeAt(0) + Number(shift) <= 122){
+        return ({
+          kind: "list",
+          head: String.fromCharCode(list.head.charCodeAt(0) + Number(shift)),
+          tail: caesar(list.tail)
+        })
+      }
+      if(list.kind == "list" && list.head.charCodeAt(0) + Number(shift) >= 122){
+        return ({
+          kind: "list",
+          head: String.fromCharCode(list.head.charCodeAt(0) + Number(shift) + 96 - 122),
+          tail: caesar(list.tail)
+        }) 
+      }
+      
+      return {kind: "empty"}
+    }
+    return caesar(l)
+}
+
+const caesarCypherWithUpper = (l: List<string>) => (shift: bigint) : List<string> =>
+  {
+    const caesar = (list: List<string>) : List<string> => {
+      if(list.kind == "list" && list.head.charCodeAt(0) + Number(shift) <= 122){
+        return ({
+          kind: "list",
+          head: String.fromCharCode(list.head.charCodeAt(0) + Number(shift)),
+          tail: caesar(list.tail)
+        })
+      }
+      if(list.kind == "list" && list.head.charCodeAt(0) + Number(shift) >= 122){
+        return ({
+          kind: "list",
+          head: String.fromCharCode(list.head.charCodeAt(0) + Number(shift) + 65 - 122),
+          tail: caesar(list.tail)
+        }) 
+      }
+      
+      return {kind: "empty"}
+    }
+    return caesar(l)
+}
+
+console.log()

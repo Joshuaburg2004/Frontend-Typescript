@@ -1,14 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.List = void 0;
-const printList = (list) => {
-    if (list.kind == "empty") {
-        return "";
+const Fun = (f) => Object.assign(f, {
+    then: function (g) {
+        return Fun(a => g(this(a)));
     }
-    if (list.tail.kind == "empty") {
-        return `${list.head}`;
+});
+const prettyprintList = (l, cont) => {
+    if (l.kind == "empty") {
+        return;
     }
-    return `${list.head} ${printList(list.tail)}`;
+    else {
+        cont(l.head);
+        prettyprintList(l.tail, cont);
+    }
 };
 const List = (array) => {
     let x = { kind: "empty" };
@@ -46,7 +51,7 @@ const rev = (l) => {
     };
     return inner(l)({ kind: "empty" });
 };
-console.log(printList(rev((0, exports.List)([5, 4, 3, 2, 1]))));
+prettyprintList(rev((0, exports.List)([5, 4, 3, 2, 1])), console.log);
 const append = (l1) => (l2) => {
     const appender = (list) => {
         if (list.kind == "empty")
@@ -57,7 +62,7 @@ const append = (l1) => (l2) => {
     };
     return appender(l1);
 };
-console.log(printList(append((0, exports.List)([1, 2, 3, 4, 5]))((0, exports.List)([6, 7, 8, 9, 0]))));
+prettyprintList(append((0, exports.List)([1, 2, 3, 4, 5]))((0, exports.List)([6, 7, 8, 9, 0])), console.log);
 const nth = (n) => (l) => {
     const getter = (i) => (list) => {
         if (list.kind == "empty")
@@ -90,7 +95,7 @@ const palindrome = (l) => {
 };
 console.log(palindrome((0, exports.List)([5, 4, 5])));
 console.log(palindrome((0, exports.List)([6, 5, 3])));
-const Compress = (l) => {
+const compress = (l) => {
     const inner = (ler) => (last) => {
         if (ler.kind == "empty") {
             return ler;
@@ -106,4 +111,45 @@ const Compress = (l) => {
     };
     return inner(l)(undefined);
 };
-console.log(printList(Compress((0, exports.List)([5, 5, 4, 4, 3, 3, 2, 2, 2, 1]))));
+prettyprintList(compress((0, exports.List)([5, 5, 4, 4, 3, 3, 2, 2, 2, 1])), console.log);
+const caesarCypher = (l) => (shift) => {
+    const caesar = (list) => {
+        if (list.kind == "list" && list.head.charCodeAt(0) + Number(shift) <= 122) {
+            return ({
+                kind: "list",
+                head: String.fromCharCode(list.head.charCodeAt(0) + Number(shift)),
+                tail: caesar(list.tail)
+            });
+        }
+        if (list.kind == "list" && list.head.charCodeAt(0) + Number(shift) >= 122) {
+            return ({
+                kind: "list",
+                head: String.fromCharCode(list.head.charCodeAt(0) + Number(shift) + 96 - 122),
+                tail: caesar(list.tail)
+            });
+        }
+        return { kind: "empty" };
+    };
+    return caesar(l);
+};
+const caesarCypherWithUpper = (l) => (shift) => {
+    const caesar = (list) => {
+        if (list.kind == "list" && list.head.charCodeAt(0) + Number(shift) <= 122) {
+            return ({
+                kind: "list",
+                head: String.fromCharCode(list.head.charCodeAt(0) + Number(shift)),
+                tail: caesar(list.tail)
+            });
+        }
+        if (list.kind == "list" && list.head.charCodeAt(0) + Number(shift) >= 122) {
+            return ({
+                kind: "list",
+                head: String.fromCharCode(list.head.charCodeAt(0) + Number(shift) + 65 - 122),
+                tail: caesar(list.tail)
+            });
+        }
+        return { kind: "empty" };
+    };
+    return caesar(l);
+};
+console.log();
