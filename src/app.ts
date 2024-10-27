@@ -118,3 +118,18 @@ const palindrome = <T>(l: List<T>) : boolean => {
 
 console.log(palindrome(List([5, 4, 5])))
 console.log(palindrome(List([6, 5, 3])))
+
+const Compress = <T> (l: List<T>): List<T> => {
+  const inner = <T> (ler: List<T>) => (last: T | undefined): List<T> => {
+    if(ler.kind == "empty"){ return ler; }
+    if(ler.head == last){ return inner(ler.tail)(last)}
+    return {
+      kind: "list",
+      head: ler.head,
+      tail: inner(ler.tail)(ler.head)
+    }
+  }
+  return inner(l)(undefined)
+}
+
+console.log(printList(Compress(List([5, 5, 4, 4, 3, 3, 2, 2, 2, 1]))))
