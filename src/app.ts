@@ -289,3 +289,24 @@ const mergeSort = <T>(l: List<T>): List<T> => {
 }
 
 prettyprintList(mergeSort(List([5, 2, 3, 9, 3])))
+
+type Expr<T> = {
+  kind: "atomic"
+  value: T
+} | {
+  kind: "sum",
+  one: Expr<T>,
+  other: Expr<T>
+} | {
+  kind: "difference",
+  one: Expr<T>,
+  other: Expr<T>
+} | {
+  kind: "product",
+  one: Expr<T>,
+  other: Expr<T>
+} | {
+  kind: "division",
+  one: Expr<T>,
+  other: Expr<T>
+}
