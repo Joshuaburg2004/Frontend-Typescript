@@ -310,3 +310,40 @@ type Expr<T> = {
   one: Expr<T>,
   other: Expr<T>
 }
+
+function Reduce<T, R>(fxy:(acc:R, curr:T)=>R, seed:R){
+  return function(arr:T[]):R{
+    if(arr.length<=0) throw new Error("Custom error message")
+    let result = seed
+    for(let i = 0;i<arr.length;i++){
+      result = fxy(result, arr[i])
+    }
+    return result
+  }
+}
+
+const reduce = <T, R>(fxy: (acc:R) => (curr:T) => R) => (seed: R) => {
+  return (arr: T[]) : R => {
+    const doer = (n: number) => (s: R): R => {
+      if(n <= arr.length - 1){ return fxy(doer(n + 1)(s))(arr[n])}
+      else{
+        return seed
+      }
+    }
+    return doer(0)(seed)
+  }
+}
+
+console.log(Reduce(((acc: number, curr: number): number => acc * curr), 1)([5,6,7,8,9]))
+console.log(reduce(((acc: number) => (curr: number): number => acc * curr))(1)([5,6,7,8,9]))
+
+const addArray = (arr: number[]) : number => {
+  return reduce((acc: number) => (curr: number): number => acc + curr)(0)(arr)
+}
+
+const subtractArray = (arr: number[]) : number => {
+  return reduce((acc: number) => (curr: number): number => acc - curr)(arr[0])(arr.splice(1))
+}
+
+console.log(addArray([5, 4, 3, 2, 1]))
+console.log(subtractArray([10, 5, 2, 1]))
