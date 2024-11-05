@@ -31,11 +31,11 @@ const Fun = <a, b>(f:BasicFun<a,b>) : Fun<a, b> =>
 
 
 
-const prettyprintList = <T>(l: List<T>, cont:BasicFun<T, void>) =>{
-  if(l.kind == "empty"){return}
+const prettyprintList = <T>(l: List<T>) =>{
+  if(l.kind == "empty"){console.log(""); return}
   else{
-    cont(l.head)
-    prettyprintList(l.tail, cont)
+    process.stdout.write(String(l.head))
+    prettyprintList(l.tail)
   }
 }
 
@@ -75,7 +75,7 @@ const rev = <T>(l: List<T>): List<T> => {
   return inner(l)({kind: "empty"})
 }
 
-prettyprintList(rev(List([5, 4, 3, 2, 1])), console.log)
+prettyprintList(rev(List([5, 4, 3, 2, 1])))
 
 const append = <T>(l1: List<T>) => (l2: List<T>) : List<T> => {
   const appender = (list: List<T>) : List<T> => {
@@ -88,7 +88,7 @@ const append = <T>(l1: List<T>) => (l2: List<T>) : List<T> => {
   return appender(l1)
 }
 
-prettyprintList(append(List([1, 2, 3, 4, 5]))(List([6, 7, 8, 9, 0])), console.log)
+prettyprintList(append(List([1, 2, 3, 4, 5]))(List([6, 7, 8, 9, 0])))
 
 const nth = <T>(n: bigint) => (l: List<T>): Option<T> => {
   const getter = (i: bigint) => (list: List<T>) : Option<T> => {
@@ -137,7 +137,7 @@ const compress = <T> (l: List<T>): List<T> => {
   return inner(l)(undefined)
 }
 
-prettyprintList(compress(List([5, 5, 4, 4, 3, 3, 2, 2, 2, 1])), console.log)
+prettyprintList(compress(List([5, 5, 4, 4, 3, 3, 2, 2, 2, 1])))
 
 
 const caesarCypher = (l: List<string>) => (shift: bigint) : List<string> =>
@@ -186,4 +186,48 @@ const caesarCypherWithUpper = (l: List<string>) => (shift: bigint) : List<string
     return caesar(l)
 }
 
-prettyprintList(caesarCypher(List(["h", "l", "y"]))(1n), console.log)
+prettyprintList(caesarCypherWithUpper(List(["h", "l", "y"]))(1n))
+
+const splitAt = <T>(i: bigint) => (l: List<T>): [List<T>, List<T>] => {
+  if (i < 0n || l.kind === "empty") {
+    return [{ kind: "empty" }, l];
+  }
+  if (i === 0n) {
+    return [
+      {
+        kind: "list",
+        head: l.head,
+        tail: { kind: "empty" },
+      },
+      l.tail,
+    ];
+  }
+  const [left, right] = splitAt<T>(i - 1n)(l.tail);
+  return [
+    {
+      kind: "list",
+      head: l.head,
+      tail: left,
+    },
+    right,
+  ];
+};
+
+prettyprintList(splitAt(2n)(List([5, 4, 3, 2, 1, 1, 2, 3,4 ,5 , 6, 7,8]))[0])
+prettyprintList(splitAt(2n)(List([5, 4, 3, 2, 1, 1, 2, 3,4 ,5 , 6, 7,8]))[1])
+
+const merge = <T>(l1 : List<T>) => (l2 : List<T>) : List<T> => {
+  if(l1.kind == "empty"){
+    return l2
+  }
+  return {
+    kind: "list",
+    head: l1.head,
+    tail: merge(l1.tail)(l2)
+  }
+}
+
+prettyprintList(merge(List([1, 2, 3, 4, 5]))(List([6, 7, 8, 9, 0])))
+prettyprintList(merge(List([1, 2, 3, 4, 5]))({kind: "empty"}))
+prettyprintList(merge({kind: "empty"})(List([1,2 ,3,4,5,6])))
+
