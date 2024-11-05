@@ -231,3 +231,61 @@ prettyprintList(merge(List([1, 2, 3, 4, 5]))(List([6, 7, 8, 9, 0])))
 prettyprintList(merge(List([1, 2, 3, 4, 5]))({kind: "empty"}))
 prettyprintList(merge({kind: "empty"})(List([1,2 ,3,4,5,6])))
 
+const mergeSort = <T>(l: List<T>): List<T> => {
+  const split = <T>(list: List<T>): [List<T>, List<T>] => {
+    const splitHelper = (l: List<T>) => (i: bigint): [List<T>, List<T>] => {
+      if (i <= 0n || l.kind === "empty") {
+        return [{ kind: "empty" }, l];
+      }
+      const [left, right] = splitHelper(l.tail)(i - 1n);
+      return [
+        {
+          kind: "list",
+          head: l.head,
+          tail: left,
+        },
+        right,
+      ];
+    };
+  
+    const length = (l: List<T>): bigint => {
+      if (l.kind === "empty") {
+        return 0n;
+      }
+      return 1n + length(l.tail);
+    };
+  
+    const len = length(list);
+    return splitHelper(list)(len / 2n);
+  };
+  const compare = (a: T, b: T) => a < b;
+  if (l.kind === "empty" || l.tail.kind === "empty") {
+    return l;
+  }
+
+  const merger = <T>(left: List<T>) => (right: List<T>) => (compare: (a: T, b: T) => boolean): List<T> => {
+    if (left.kind === "empty") {
+      return right;
+    }
+    if (right.kind === "empty") {
+      return left;
+    }
+    if (compare(left.head, right.head)) {
+      return {
+        kind: "list",
+        head: left.head,
+        tail: merger(left.tail)(right)(compare),
+      };
+    } else {
+      return {
+        kind: "list",
+        head: right.head,
+        tail: merger(left)(right.tail)(compare),
+      };
+    }
+  };
+  const [left, right] = split(l);
+  return merger(mergeSort(left))(mergeSort(right))(compare);
+}
+
+prettyprintList(mergeSort(List([5, 2, 3, 9, 3])))
