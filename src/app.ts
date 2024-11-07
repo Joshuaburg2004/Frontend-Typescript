@@ -290,27 +290,61 @@ const mergeSort = <T>(l: List<T>): List<T> => {
 
 prettyprintList(mergeSort(List([5, 2, 3, 9, 3])))
 
-type Expr<T> = {
-  kind: "atomic"
-  value: T
-} | {
-  kind: "sum",
-  one: Expr<T>,
-  other: Expr<T>
-} | {
-  kind: "difference",
-  one: Expr<T>,
-  other: Expr<T>
-} | {
-  kind: "product",
-  one: Expr<T>,
-  other: Expr<T>
-} | {
-  kind: "division",
-  one: Expr<T>,
-  other: Expr<T>
+type Atomic = {Value: number, kind: "atomic"}
+type Expr = (
+  Atomic | 
+  {Add: [Expr, Expr], kind: "add"} |
+  {Sub: [Expr, Expr], kind: "sub"} |
+  {Mul: [Expr, Expr], kind: "mul"} |
+  {Div: [Expr, Expr], kind: "div"} | 
+  {Mod: [Expr, Expr], kind: "mod"}
+)
+const Eval = (e: Expr): Expr => {
+  switch(e.kind){
+    case "atomic": return e
+    case "add":
+      const left = Eval(e.Add[0])
+      const right = Eval(e.Add[1])
+      if(left.kind == "atomic" && right.kind == "atomic"){
+        return {Value: left.Value + right.Value, kind: "atomic"}
+      }
+      break
+    case "sub":
+      const left1 = Eval(e.Sub[0])
+      const right1 = Eval(e.Sub[1])
+      if(left1.kind == "atomic" && right1.kind == "atomic"){
+        return {Value: left1.Value - right1.Value, kind: "atomic"}
+      }
+      break
+    case "mul":
+      const left2 = Eval(e.Mul[0])
+      const right2 = Eval(e.Mul[1])
+      if(left2.kind == "atomic" && right2.kind == "atomic"){
+        return {Value: left2.Value * right2.Value, kind: "atomic"}
+      }
+      break
+    case "div":
+      const left3 = Eval(e.Div[0])
+      const right3 = Eval(e.Div[1])
+      if(left3.kind == "atomic" && right3.kind == "atomic"){
+        return {Value: left3.Value / right3.Value, kind: "atomic"}
+      }
+      break
+    case "mod":
+      const left4 = Eval(e.Mod[0])
+      const right4 = Eval(e.Mod[1])
+      if(left4.kind == "atomic" && right4.kind == "atomic"){
+        return {Value: left4.Value % right4.Value, kind: "atomic"}
+      }
+      break
+    default:
+      return e
+  }
+  return e
 }
 
+const expr: Expr = {Add: [{Add: [{Value: 6, kind: "atomic"}, {Value: 4, kind: "atomic"}], kind: "add"}, {Value: 5, kind: "atomic"}], kind: "add"}
+console.log(Eval(expr))
 function Reduce<T, R>(fxy:(acc:R, curr:T)=>R, seed:R){
   return function(arr:T[]):R{
     if(arr.length<=0) throw new Error("Custom error message")
@@ -345,5 +379,10 @@ const subtractArray = (arr: number[]) : number => {
   return reduce((acc: number) => (curr: number): number => acc - curr)(arr[0])(arr.splice(1))
 }
 
+const productArray = (arr: number[]) : number => {
+  return reduce((acc: number) => (curr: number): number => acc * curr)(1)(arr)
+}
+
 console.log(addArray([5, 4, 3, 2, 1]))
 console.log(subtractArray([10, 5, 2, 1]))
+console.log(productArray([5, 4, 3, 2, 1]))
